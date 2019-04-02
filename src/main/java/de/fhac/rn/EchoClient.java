@@ -1,5 +1,6 @@
 package de.fhac.rn;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
@@ -11,9 +12,9 @@ public class EchoClient {
 		clientThread.start();
 		DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextLine()) {
-			dataOutputStream.writeUTF(scanner.nextLine());
-		}
+		dataOutputStream.writeUTF(scanner.nextLine());
+		DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+		System.out.println(dataInputStream.readUTF());
 		scanner.close();
 	}
 }
