@@ -14,7 +14,7 @@ public class Client {
     public Client(Socket socket) {
         this.socket = socket;
         scanner = new Scanner(System.in);
-        running=true;
+        running = true;
     }
 
     public void sendToServer(String message) throws IOException {
