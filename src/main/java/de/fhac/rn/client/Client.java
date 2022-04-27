@@ -10,6 +10,11 @@ public class Client {
     private Socket socket;
     private boolean running;
     Scanner scanner;
+    private Receiver receiver;
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 
     public Client(Socket socket) {
         this.socket = socket;
@@ -19,6 +24,9 @@ public class Client {
 
     public void sendToServer(String message) throws IOException {
         var outToServer = new DataOutputStream(socket.getOutputStream());
+        if(message.endsWith("/exit")){
+            scanner.close();
+        }
         outToServer.writeUTF(message);
     }
 
@@ -29,7 +37,6 @@ public class Client {
 
     public void stop() throws IOException {
         this.socket.close();
-        this.scanner.close();
     }
 
     public boolean isRunning() {
@@ -41,11 +48,16 @@ public class Client {
         return message;
     }
 
-    public void processReceivdeMessage(String message) {
+    public void processReceivedMessage(String message) {
         System.out.println(message);
         if (message.contains("/exit")) {
             running = false;
         }
+    }
+
+    private void startReceiver() {
+        receiver = new Receiver(socket, this);
+        receiver.start();
     }
 
 
@@ -55,18 +67,11 @@ public class Client {
         //var outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
         Client client = new Client(clientSocket);
+        client.startReceiver();
         while (client.isRunning()) {
             String message = client.promptForNewMessage();
             client.sendToServer(message);
-            String returnMessage = client.waitForNewMessage();
-            client.processReceivdeMessage(returnMessage);
         }
         client.stop();
-/*        var message = scanner.nextLine();
-        outToServer.writeUTF(message);
-        var echoMessage = inFromServer.readUTF();
-        System.out.println(echoMessage);
-        scanner.close();
-        clientSocket.close();*/
     }
 }
