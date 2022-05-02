@@ -24,7 +24,7 @@ public class Client {
 
     public void sendToServer(String message) throws IOException {
         var outToServer = new DataOutputStream(socket.getOutputStream());
-        if(message.endsWith("/exit")){
+        if (message.endsWith("/exit")) {
             scanner.close();
         }
         outToServer.writeUTF(message);
@@ -44,8 +44,12 @@ public class Client {
     }
 
     public String promptForNewMessage() {
-        String message = scanner.nextLine();
-        return message;
+        try {
+            String message = scanner.nextLine();
+            return message;
+        }catch(IllegalStateException e){
+         return "";
+        }
     }
 
     public void processReceivedMessage(String message) {
